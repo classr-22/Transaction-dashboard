@@ -190,3 +190,44 @@ exports.getPieChartData = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch pie chart data', error });
   }
 };
+
+exports.getCombinedData = async (req, res) => {
+  try {
+    const { month } = req.query;
+
+    if (!month) {
+      return res.status(400).json({ message: 'Please provide the month.' });
+    }
+
+    
+    const baseUrl = 'http://localhost:3000/api/products';
+    const statisticsUrl = `${baseUrl}/statistics?month=${month}`;
+    const barChartUrl = `${baseUrl}/barchart?month=${month}`;
+    const pieChartUrl = `${baseUrl}/piechart?month=${month}`;
+
+   
+    const [statisticsResponse, barChartResponse, pieChartResponse] = await Promise.all([
+      axios.get(statisticsUrl),  
+      axios.get(barChartUrl),    
+      axios.get(pieChartUrl)     
+    ]);
+
+    
+    const statisticsData = statisticsResponse.data;
+    const barChartData = barChartResponse.data;
+    const pieChartData = pieChartResponse.data;
+
+   
+    const combinedData = {
+      statistics: statisticsData,
+      barChart: barChartData,
+      pieChart: pieChartData
+    };
+
+   
+    res.status(200).json(combinedData);
+  } catch (error) {
+    console.error('Error while fetching combined data:', error);
+    res.status(500).json({ message: 'Failed to fetch combined data', error });
+  }
+};

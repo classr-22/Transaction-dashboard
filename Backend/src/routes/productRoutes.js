@@ -10,5 +10,6 @@ router.get('/transactions', productController.getTransactions);
 router.get('/statistics', productController.getStatisticsByMonth);
 router.get('/barchart', productController.getBarChartData);
 router.get('/piechart', productController.getPieChartData);
+router.get('/combined', productController.getCombinedData);
 
 module.exports = router;
