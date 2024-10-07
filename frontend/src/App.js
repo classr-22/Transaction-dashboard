@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import './App.css';
 import TransactionsTable from './components/TransactionsTable';
+import TransactionsList from './components/TransactionsList';
 
 function App() {
 
@@ -31,6 +32,9 @@ function App() {
         </select>
       </label>
       <TransactionsTable selectedMonth={month} /> 
+      <TransactionsList month={month} />
+      {/* <BarChart month={month} /> */}
+      
     </div>
   );
 }

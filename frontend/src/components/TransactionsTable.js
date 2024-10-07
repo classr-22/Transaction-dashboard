@@ -10,7 +10,6 @@ const TransactionsList = () => {
     
     const fetchTransactions = async () => {
       try {
-        console.log("hii")
       
         const response = await axios.get('http://localhost:3000/api/products/transactions');
         setTransactions(response.data.products); 
