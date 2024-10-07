@@ -71,3 +71,52 @@ exports.getTransactions = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch transactions', error });
   }
 };
+
+
+exports.getStatisticsByMonth = async (req, res) => {
+  try {
+    const { month } = req.query;
+
+    // Ensure that the month is provided
+    if (!month) {
+      return res.status(400).json({ message: 'Please provide the month.' });
+    }
+
+    // Convert month to a number for processing
+    const selectedMonth = parseInt(month);
+
+    // Create a filter based on the month, irrespective of the year
+    const monthFilter = {
+      $expr: { $eq: [{ $month: "$dateOfSale" }, selectedMonth] }
+    };
+
+    // Query for sold items within the selected month
+    const soldItems = await Product.find({
+      sold: true,
+      ...monthFilter
+    });
+
+    // Query for not sold items within the selected month
+    const notSoldItems = await Product.find({
+      sold: false,
+      ...monthFilter
+    });
+
+    // Calculate total sale amount for sold items
+    const totalSaleAmount = soldItems.reduce((total, item) => total + item.price, 0);
+
+    // Calculate total number of sold and not sold items
+    const totalSoldItems = soldItems.length;
+    const totalNotSoldItems = notSoldItems.length;
+
+    // Respond with the statistics
+    res.status(200).json({
+      totalSaleAmount,
+      totalSoldItems,
+      totalNotSoldItems,
+    });
+  } catch (error) {
+    console.error('Error while fetching statistics:', error);
+    res.status(500).json({ message: 'Failed to fetch statistics', error });
+  }
+};
