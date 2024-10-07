@@ -156,3 +156,37 @@ exports.getBarChartData = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch bar chart data', error });
   }
 };
+
+exports.getPieChartData = async (req, res) => {
+  try {
+    const { month } = req.query;
+
+    if (!month) {
+      return res.status(400).json({ message: 'Please provide the month.' });
+    }
+
+    const selectedMonth = parseInt(month);
+
+    const monthFilter = {
+      $expr: { $eq: [{ $month: "$dateOfSale" }, selectedMonth] }
+    };
+
+    const categoryData = await Product.aggregate([
+      { $match: monthFilter },
+      {
+        $group: {
+          _id: "$category",  
+          count: { $sum: 1 } 
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      month: selectedMonth,
+      categoryData
+    });
+  } catch (error) {
+    console.error('Error while fetching pie chart data:', error);
+    res.status(500).json({ message: 'Failed to fetch pie chart data', error });
+  }
+};
