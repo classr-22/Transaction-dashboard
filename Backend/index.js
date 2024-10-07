@@ -2,13 +2,10 @@ const express = require('express');
 const port = 3000
 const mongoose = require('mongoose');
 const axios = require('axios');
-const Product = require('./src/models/productSchema.js');  // Assuming you have your Mongoose model
+const Product = require('./src/models/productSchema.js'); 
 const productRoutes = require('./src/routes/productRoutes.js');
 
 const app = express();
-// app.use(express.json(),()=>{
-//     console.log("server started");
-// });
 
 mongoose.connect('mongodb://localhost:27017/products')
   .then(() => {
