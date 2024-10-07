@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+
 import './App.css';
+import TransactionsTable from './components/TransactionsTable';
 
 function App() {
+
+  const [month, setMonth] = useState(3);
+  const handleMonthChange = (e) => {
+    setMonth(parseInt(e.target.value));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Product Dashboard</h1>
+      <label>
+        Select Month:
+        <select value={month} onChange={handleMonthChange}>
+          <option value={1}>January</option>
+          <option value={2}>February</option>
+          <option value={3}>March</option>
+          <option value={4}>April</option>
+          <option value={5}>May</option>
+          <option value={6}>June</option>
+          <option value={7}>July</option>
+          <option value={8}>August</option>
+          <option value={9}>September</option>
+          <option value={10}>October</option>
+          <option value={11}>November</option>
+          <option value={12}>December</option>
+        </select>
+      </label>
+      <TransactionsTable selectedMonth={month} /> 
     </div>
   );
 }
