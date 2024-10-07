@@ -4,8 +4,11 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 const Product = require('./src/models/productSchema.js'); 
 const productRoutes = require('./src/routes/productRoutes.js');
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/products')
   .then(() => {
