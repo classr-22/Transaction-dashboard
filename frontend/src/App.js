@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Product Dashboard</h1>
+        <h1>Transaction Dashboard</h1>
         <div className="month-selector">
           <label htmlFor="month">Select Month:</label>
           <select id="month" value={month} onChange={handleMonthChange}>
