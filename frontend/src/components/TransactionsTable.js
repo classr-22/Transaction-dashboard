@@ -1,43 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const TransactionsList = ({ month }) => {
+const TransactionsList = ({month}) => {
   const [transactions, setTransactions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [perPage] = useState(10); 
 
-
-  const fetchTransactions = async (query = '') => {
-
+  const fetchTransactions = async (query = '', page = 1) => {
     try {
+      console.log("hii")
       const response = await axios.get('http://localhost:3000/api/products/transactions', {
         params: {
           month: month,
-          search: query, // Send the search query to the API
+          search: query,
+          page: page,
+          perPage: perPage, 
         },
       });
+      console.log(response);
       setTransactions(response.data.products);
+      setTotalPages(response.data.totalPages); 
     } catch (error) {
       console.log('Failed to fetch transactions');
     }
   };
 
   useEffect(() => {
-    fetchTransactions(); 
-  }, [month]);
+    fetchTransactions(searchQuery, currentPage); 
+  }, [month, searchQuery, currentPage]); 
 
-  
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
+    setCurrentPage(1); 
+    fetchTransactions(query, 1); 
+  };
 
-    
-    if (query.trim() !== '') {
-      fetchTransactions(query); 
-    } else {
-      fetchTransactions(); 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
     }
   };
 
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
 
   return (
     <div>
@@ -75,6 +86,15 @@ const TransactionsList = ({ month }) => {
           ))}
         </tbody>
       </table>
+      <div style={{ marginTop: '16px' }}>
+        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+          Previous
+        </button>
+        <span style={{ margin: '0 8px' }}>Page {currentPage} of {totalPages}</span>
+        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+          Next
+        </button>
+      </div>
     </div>
   );
 };

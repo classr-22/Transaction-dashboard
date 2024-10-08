@@ -25,13 +25,15 @@ exports.initializeDatabase = async (req, res) => {
 
 
 exports.getTransactions = async (req, res) => {
-  const { search, page = 1, perPage = 10, minPrice, maxPrice } = req.query; // Destructure search, page, perPage, minPrice, and maxPrice from the query
+  console.log("start");
+  const { search, month, page = 1, perPage = 10, minPrice, maxPrice } = req.query; 
 
   const pageNum = parseInt(page);
   const perPageNum = parseInt(perPage);
 
   const searchCriteria = {};
   
+ 
   if (search) {
     const searchRegex = new RegExp(search, 'i'); 
     searchCriteria.$or = [
@@ -40,7 +42,7 @@ exports.getTransactions = async (req, res) => {
     ];
   }
 
- 
+  
   if (minPrice) {
     searchCriteria.price = { $gte: parseFloat(minPrice) };
   }
@@ -49,6 +51,13 @@ exports.getTransactions = async (req, res) => {
     searchCriteria.price = { ...searchCriteria.price, $lte: parseFloat(maxPrice) }; 
   }
 
+  
+  if (month) {
+    searchCriteria.$expr = {
+      $eq: [{ $month: "$dateOfSale" }, parseInt(month)]
+    };
+  }
+  console.log(searchCriteria);
   try {
     const products = await Product.find(searchCriteria) 
       .skip((pageNum - 1) * perPageNum) 
