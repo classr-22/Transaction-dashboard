@@ -43,7 +43,7 @@ const BarChartComponent = ({month}) => {
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>
               {item._id !== "901+" 
               ? 
-                (item._id==0) ? `${item._id}---${item._id+100}` : `${item._id}---${item._id+99}`
+                (item._id===0) ? `${item._id}---${item._id+100}` : `${item._id}---${item._id+99}`
               : 
                 item._id}
                 </td>

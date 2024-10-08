@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+//hiiiiiiii
 const TransactionsList = ({month}) => {
   const [transactions, setTransactions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [perPage] = useState(10); 
+  const [minPrice, setMinPrice] = useState(''); // State for minimum price
+  const [maxPrice, setMaxPrice] = useState('');
 
-  const fetchTransactions = async (query = '', page = 1) => {
+  const fetchTransactions = async (query = '', page = 1,minPriceValue = '', maxPriceValue = '') => {
     try {
       console.log("hii")
       const response = await axios.get('http://localhost:3000/api/products/transactions', {
@@ -17,6 +19,8 @@ const TransactionsList = ({month}) => {
           search: query,
           page: page,
           perPage: perPage, 
+          minPrice: minPriceValue, // Add minPrice as query param
+          maxPrice: maxPriceValue, 
         },
       });
       console.log(response);
@@ -28,14 +32,29 @@ const TransactionsList = ({month}) => {
   };
 
   useEffect(() => {
-    fetchTransactions(searchQuery, currentPage); 
-  }, [month, searchQuery, currentPage]); 
+    fetchTransactions(searchQuery, currentPage, minPrice, maxPrice); 
+  }, [month, searchQuery, currentPage,minPrice, maxPrice]); 
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
     setCurrentPage(1); 
     fetchTransactions(query, 1); 
+  };
+
+  const handleMinPriceChange = (event) => {
+    const value = event.target.value;
+    setMinPrice(value);
+    setCurrentPage(1); 
+    fetchTransactions(searchQuery, 1, value, maxPrice); 
+  };
+
+  // Handle maximum price change
+  const handleMaxPriceChange = (event) => {
+    const value = event.target.value;
+    setMaxPrice(value);
+    setCurrentPage(1); 
+    fetchTransactions(searchQuery, 1, minPrice, value); 
   };
 
   const handleNextPage = () => {
@@ -55,11 +74,33 @@ const TransactionsList = ({month}) => {
       <h2>Transactions</h2>
       <input
         type="text"
-        placeholder="Search by title, description, or price..."
+        placeholder="Search by title, description...."
         value={searchQuery}
         onChange={handleSearchChange}
         style={{ marginBottom: '16px', padding: '8px', width: '100%' }}
       />
+
+<div style={{ marginBottom: '16px' }}>
+        <label>
+          Min Price:
+          <input
+            type="number"
+            value={minPrice}
+            onChange={handleMinPriceChange}
+            style={{ marginLeft: '8px', padding: '8px' }}
+          />
+        </label>
+        <label style={{ marginLeft: '16px' }}>
+          Max Price:
+          <input
+            type="number"
+            value={maxPrice}
+            onChange={handleMaxPriceChange}
+            style={{ marginLeft: '8px', padding: '8px' }}
+          />
+        </label>
+      </div>
+
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
