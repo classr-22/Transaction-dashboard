@@ -1,7 +1,7 @@
 
 
 const axios = require('axios');
-const Product = require('../models/productSchema.js'); // Assuming you have a Product model defined
+const Product = require('../models/productSchema.js'); 
 
 exports.initializeDatabase = async (req, res) => {
   try {
@@ -25,7 +25,6 @@ exports.initializeDatabase = async (req, res) => {
 
 
 exports.getTransactions = async (req, res) => {
-  console.log("start");
   const { search, month, page = 1, perPage = 10, minPrice, maxPrice } = req.query; 
 
   const pageNum = parseInt(page);
@@ -57,7 +56,7 @@ exports.getTransactions = async (req, res) => {
       $eq: [{ $month: "$dateOfSale" }, parseInt(month)]
     };
   }
-  console.log(searchCriteria);
+
   try {
     const products = await Product.find(searchCriteria) 
       .skip((pageNum - 1) * perPageNum) 

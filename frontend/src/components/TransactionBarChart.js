@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, LabelList
+} from 'recharts';
 
-const BarChartComponent = ({month}) => {
+const BarChartComponent = ({ month }) => {
   const [barChartData, setBarChartData] = useState([]);
 
-  // Fetch bar chart data when the component mounts
   useEffect(() => {
     const fetchBarChartData = async () => {
       try {
@@ -13,47 +15,43 @@ const BarChartComponent = ({month}) => {
             month: month,
           },
         });
-        setBarChartData(response.data.priceRanges); // Update the state with the fetched data
+        setBarChartData(response.data.priceRanges); 
       } catch (error) {
         console.error('Error fetching bar chart data:', error);
       }
     };
 
     fetchBarChartData();
-  }, [month]); // Run effect only once when component mounts
+  }, [month]);
 
-  // Check if barChartData has items before rendering
-  if (!barChartData || barChartData.length === 0) {
-    return <div>No data available</div>; // Handle case when data is empty
+ 
+  const formattedData = barChartData.map((item) => ({
+    priceRange: item._id !== '901+' 
+      ? (item._id === 0) ? `${item._id} - ${item._id + 100}` : `${item._id} - ${item._id + 99}`
+      : item._id,
+    count: item.count,
+  }));
+
+  if (formattedData.length === 0) {
+    return <div>No data available</div>;
   }
 
   return (
     <div>
-        <h2>Bar chart</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Price Range</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Count</th>
-          </tr>
-        </thead>
-        <tbody>
-          {barChartData.map((item, index) => (
-            <tr key={index}>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-              {item._id !== "901+" 
-              ? 
-                (item._id===0) ? `${item._id}---${item._id+100}` : `${item._id}---${item._id+99}`
-              : 
-                item._id}
-                </td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.count}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h2>Bar Chart</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={formattedData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="priceRange" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="count" fill="#8884d8">
+            <LabelList dataKey="count" position="top" />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
-}
+};
 
 export default BarChartComponent;

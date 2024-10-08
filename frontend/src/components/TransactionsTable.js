@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-//hiiiiiiii
+
 const TransactionsList = ({month}) => {
   const [transactions, setTransactions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [perPage] = useState(10); 
-  const [minPrice, setMinPrice] = useState(''); // State for minimum price
+  const [minPrice, setMinPrice] = useState(''); 
   const [maxPrice, setMaxPrice] = useState('');
 
   const fetchTransactions = async (query = '', page = 1,minPriceValue = '', maxPriceValue = '') => {
     try {
-      console.log("hii")
+      
       const response = await axios.get('http://localhost:3000/api/products/transactions', {
         params: {
           month: month,
           search: query,
           page: page,
           perPage: perPage, 
-          minPrice: minPriceValue, // Add minPrice as query param
+          minPrice: minPriceValue, 
           maxPrice: maxPriceValue, 
         },
       });
-      console.log(response);
+      
       setTransactions(response.data.products);
       setTotalPages(response.data.totalPages); 
     } catch (error) {
@@ -49,7 +49,7 @@ const TransactionsList = ({month}) => {
     fetchTransactions(searchQuery, 1, value, maxPrice); 
   };
 
-  // Handle maximum price change
+ 
   const handleMaxPriceChange = (event) => {
     const value = event.target.value;
     setMaxPrice(value);
@@ -58,6 +58,7 @@ const TransactionsList = ({month}) => {
   };
 
   const handleNextPage = () => {
+    
     if (currentPage < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
@@ -110,7 +111,7 @@ const TransactionsList = ({month}) => {
             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Price</th>
             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Category</th>
             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Sold</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Date of Sale</th>
+            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Image</th>
           </tr>
         </thead>
         <tbody>
@@ -122,7 +123,7 @@ const TransactionsList = ({month}) => {
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>${transaction.price}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{transaction.category}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{transaction.sold ? 'Yes' : 'No'}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{transaction.dateOfSale}</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}><img width="40" height="40" src={transaction.image}></img></td>
             </tr>
           ))}
         </tbody>
@@ -131,8 +132,8 @@ const TransactionsList = ({month}) => {
         <button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
         </button>
-        <span style={{ margin: '0 8px' }}>Page {currentPage} of {totalPages}</span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+        <span style={{ margin: '0 8px' }}> {(totalPages===0)? `Page ${currentPage} of 1` : `Page ${currentPage} of ${totalPages}`}</span>
+        <button onClick={handleNextPage} disabled={currentPage === totalPages || totalPages===0}>
           Next
         </button>
       </div>
