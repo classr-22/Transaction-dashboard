@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const TransactionsList = () => {
+const TransactionsList = ({ month }) => {
   
   const [statistics, setStatistics] = useState({});
   const [loading, setLoading] = useState(true);
@@ -15,10 +15,9 @@ const TransactionsList = () => {
     try {
       const response = await axios.get(API_URL, {
         params: {
-          month: 9, 
+          month: month, 
         },
       });
-      console.log(response.data)
       setStatistics(response.data);
     } catch (error) {
       setError('Failed to fetch statistics');
@@ -29,7 +28,7 @@ const TransactionsList = () => {
 
   useEffect(() => {
     fetchStatistics();
-  }, []); 
+  }, [month]); 
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;

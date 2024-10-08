@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './App.css';
 import TransactionsTable from './components/TransactionsTable';
 import TransactionsList from './components/TransactionsList';
+import BarChartComponent from './components/TransactionBarChart';
 
 function App() {
 
@@ -31,9 +32,9 @@ function App() {
           <option value={12}>December</option>
         </select>
       </label>
-      <TransactionsTable selectedMonth={month} /> 
+      <TransactionsTable month={month} /> 
       <TransactionsList month={month} />
-      {/* <BarChart month={month} /> */}
+      <BarChartComponent month={month}></BarChartComponent>
       
     </div>
   );
